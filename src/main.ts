@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
+import { PrismaService } from './prisma.services';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,8 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
   const configService = app.get(ConfigService);
+  const dbService: PrismaService = app.get(PrismaService);
+  dbService.enableShutdownHooks(app);
   const swaggerConfig = new DocumentBuilder()
     .setTitle('User Management API')
     .setDescription('A simple REST API with CRUD endpoints for a simple user management system')
@@ -26,6 +29,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
   // enable useContainer to be able to inject into class validators
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
-  await app.listen(configService.get('PORT'));
+  await app.listen(configService.get('PORT') as number);
 }
 bootstrap();
