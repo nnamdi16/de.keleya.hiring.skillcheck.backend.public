@@ -1,3 +1,4 @@
+import { TerminusModule } from '@nestjs/terminus';
 import { Module } from '@nestjs/common';
 import { PrismaService } from './prisma.services';
 import { UserController } from './user/user.controller';
@@ -10,6 +11,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './common/strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { AppController } from './app.controller';
+import { UserHealthIndicator } from './user/user.health';
+import HealthController from './health-check/health.controller';
 
 @Module({
   imports: [
@@ -25,24 +28,26 @@ import { AppController } from './app.controller';
       }),
     }),
     PassportModule,
+    TerminusModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: '1year',
+          expiresIn: '1d',
           algorithm: 'HS256',
         },
       }),
     }),
   ],
-  controllers: [AppController, UserController],
+  controllers: [AppController, UserController, HealthController],
   providers: [
     UserService,
     PrismaService,
     ConfigService,
     JwtStrategy,
+    UserHealthIndicator,
     { provide: APP_FILTER, useClass: QueryExceptionFilter },
   ],
 })
