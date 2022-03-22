@@ -15,9 +15,9 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Value should be 3\", function () {",
+									"pm.test(\"Value should be 2\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0].id).to.eql(3);",
+									"    pm.expect(jsonData[0].id).to.eql(2);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -46,9 +46,9 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Value should be 3\", function () {",
+									"pm.test(\"Value should be 2\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData[0].id).to.eql(3);",
+									"    pm.expect(jsonData[0].id).to.eql(2);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -95,13 +95,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseurl}}/user/2",
+							"raw": "{{baseurl}}/user/3",
 							"host": [
 								"{{baseurl}}"
 							],
 							"path": [
 								"user",
-								"2"
+								"3"
 							]
 						}
 					},
@@ -126,13 +126,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseurl}}/user/3",
+							"raw": "{{baseurl}}/user/2",
 							"host": [
 								"{{baseurl}}"
 							],
 							"path": [
 								"user",
-								"3"
+								"2"
 							]
 						}
 					},
@@ -151,12 +151,12 @@
 									"",
 									"pm.test(\"Name is updated\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.name).to.eql('new name');",
+									"    pm.expect(jsonData.name).to.eql('Fahrn Joe');",
 									"});",
 									"",
 									"pm.test(\"Updated At != Created At\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.updatedAt).to.not.eql(jsonData.createdAt);",
+									"    pm.expect(jsonData.updated_at).to.not.eql(jsonData.created_at);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -168,7 +168,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": 3,\n    \"name\": \"new name\"\n}",
+							"raw": "{\n    \"id\": 2,\n    \"name\": \"Fahrn Joe\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -194,8 +194,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});",
 									"",
 									"pm.test(\"Has credentials\", function () {",
@@ -213,7 +213,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"mamaUser@fake-mail.com\",\n    \"password\": \"password\"\n}",
+							"raw": "{\n    \"email\": \"johndoe@gmail.com\",\n    \"password\": \"password12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -240,8 +240,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});",
 									"",
 									"pm.test(\"Has token\", function () {",
@@ -263,7 +263,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"mamaUser@fake-mail.com\",\n    \"password\": \"password\"\n}",
+							"raw": "{\n    \"email\": \"johndoe@gmail.com\",\n    \"password\": \"password12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -290,8 +290,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});",
 									"",
 									""
@@ -358,8 +358,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});",
 									"",
 									"pm.test(\"Has credentials\", function () {",
@@ -377,7 +377,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"mamaUser@fake-mail.com\",\n    \"password\": \"password\"\n}",
+							"raw": "{\n    \"email\": \"johndoe@example.com\",\n    \"password\": \"password12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -404,8 +404,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});",
 									"",
 									"pm.test(\"Has token\", function () {",
@@ -427,7 +427,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"mamaUser@fake-mail.com\",\n    \"password\": \"password\"\n}",
+							"raw": "{\n    \"email\": \"johndoe@example.com\",\n    \"password\": \"password12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -454,8 +454,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});",
 									""
 								],
@@ -594,8 +594,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -607,7 +607,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"New User\",\n\t\"email\": \"newuser@fake-mail.com\",\n\t\"password\": \"password\"\n}",
+							"raw": "{\n\t\"name\": \"Kampala George\",\n\t\"email\": \"kampala@fake-mail.com\",\n\t\"password\": \"password12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -639,7 +639,7 @@
 									"",
 									"pm.test(\"Name deleted\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.users.name).to.eql(\"(deleted)\");",
+									"    pm.expect(jsonData.users.name).to.eql(\"deleted\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -683,12 +683,12 @@
 									"",
 									"pm.test(\"Name is updated\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.name).to.eql('new name');",
+									"    pm.expect(jsonData.name).to.eql('John Doe');",
 									"});",
 									"",
 									"pm.test(\"Updated At != Created At\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.updatedAt).to.not.eql(jsonData.createdAt);",
+									"    pm.expect(jsonData.updated_at).to.not.eql(jsonData.created_at);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -700,7 +700,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": 1,\n    \"name\": \"new name\"\n}",
+							"raw": "{\n    \"id\": 1,\n    \"name\": \"John Doe\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -779,11 +779,11 @@
 		},
 		{
 			"key": "tokenUser",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hbWFVc2VyQGZha2UtbWFpbC5jb20iLCJpZCI6MywiaWF0IjoxNjM3MjM1ODI5LCJleHAiOjE2Njg3OTM0Mjl9.gZJE2WIXw9Rbwc4Eouv5hOwDrfzf6bY-wx3fYbhHyMA"
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJqb2huZG9lQGdtYWlsLmNvbSIsImlzX2FkbWluIjpmYWxzZSwiZW1haWxfY29uZmlybWVkIjpmYWxzZSwiaWF0IjoxNjQ3NzI3Mzc4LCJleHAiOjE2NzkyNjMzNzh9.pTIipDzqf1mPtLgUY6oB_fuYiEcYAUx622rZgU3HvvI"
 		},
 		{
 			"key": "tokenAdmin",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluQGZha2UtbWFpbC5jb20iLCJpZCI6NCwiaWF0IjoxNjM3MzM3ODg0LCJleHAiOjE2Njg4OTU0ODR9.b79XlIFEnTIE0A0RWJA2pK2atSb1bpRzkC0nNGzGIxQ"
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJqb2huZG9lQGV4YW1wbGUuY29tIiwiaXNfYWRtaW4iOnRydWUsImVtYWlsX2NvbmZpcm1lZCI6ZmFsc2UsImlhdCI6MTY0NzgwNDk4OCwiZXhwIjoxNjc5MzQwOTg4fQ.xFK_ck2Hkz7BfMupEn26LX9V1FtHOKIQcQI4cee8iL8"
 		}
 	]
 }
