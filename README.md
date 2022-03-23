@@ -76,4 +76,17 @@ yarn test
 ```
 ### Your Notes Below Here
 
+#### Improvements to the data models includes 
+- The models(schema) could be seperated in different schema.prisma files. The User and Credential model could be lumped as one model than creating a seperate model for them.
+
+
+#### Other Solutions to Implement Similar Projects
+- Databases such as Postgres and MongoDB could be considered as databases for building the project.
+- ORMs such TypeORM and Sequelize are other possible solutions to implement similar projects
+
+
+#### Testing
+All the service layers were tested using unit test. End to end testing was not fully accomplished because of the errors gotten from testing with database of the project. Possibly a mockDB could resolve this which I am researching on. 
+
+Areas of Improvement: Writing more test especially completing the test that covers the sad path and completing the end-to-end test
 ...
