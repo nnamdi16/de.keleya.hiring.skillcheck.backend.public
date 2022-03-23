@@ -1,6 +1,9 @@
 export interface JwtTokenUser {
   username?: string | null;
-  id: number | null;
+  is_admin?: boolean;
+  [key: string]: any;
+  accountType?: string[];
+  id?: number;
 }
 
 export const isJwtTokenUser = (candidate: unknown): candidate is JwtTokenUser => {
