@@ -1,3 +1,7 @@
+import { EmailOrPasswordNotFoundException } from './../../src/common/exception-filters/EmailOrPasswordNotFound';
+import { UserNotFoundException } from './../../src/common/exception-filters/UserNotFoundException';
+import { UserAlreadyExistsException } from './../../src/common/exception-filters/UserAlreadyExistsException';
+import { UnauthorizedException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { UserService } from '../../src/user/user.service';
 import { prismaMock } from '../../singleton';
@@ -22,6 +26,15 @@ export const tokenPayload: JwtTokenUser = {
   exp: 1679456317,
 };
 
+export const nonAdminTokenPayload: JwtTokenUser = {
+  id: 1,
+  username: 'johndoe@example.com',
+  is_admin: false,
+  email_confirmed: false,
+  iat: 1647920317,
+  exp: 1679456317,
+};
+
 const authenticateUserDto: AuthenticateUserDto = {
   email: 'johndoe@example.com',
   password: 'password12345',
@@ -32,12 +45,25 @@ export const userDetails = {
   name: 'John Doe',
   email: 'johndoe@example.com',
   password: 'password12345',
-  created_at: new Date(),
-  updated_at: new Date(),
+  created_at: new Date('2022-09-07T22:54:07.042Z'),
+  updated_at: new Date('2022-09-07T22:54:07.042Z'),
   email_confirmed: false,
   is_admin: true,
   isDeleted: false,
   credentials_id: 1,
+};
+
+export const nonAdminUserDetails = {
+  id: 1,
+  name: 'John Doe',
+  email: 'johndoe@example.com',
+  password: 'password12345',
+  created_at: new Date(),
+  updated_at: new Date(),
+  email_confirmed: false,
+  is_admin: false,
+  isDeleted: false,
+  credentials_id: 2,
 };
 
 const tokenResult = {
@@ -95,6 +121,67 @@ describe('UserService', () => {
     await expect(userService.create(userDetails)).resolves.toEqual(userResponse);
   });
 
+  test('should return user already exist for existing user', async () => {
+    prismaMock.user.findUnique.mockResolvedValue(userDetails);
+    prismaMock.user.create.mockResolvedValue(userDetails);
+
+    await expect(userService.create(userDetails)).rejects.toEqual(new UserAlreadyExistsException());
+  });
+
+  test("Admin should update a user's name if user  ", async () => {
+    const result = {
+      id: 1,
+      name: 'Fahrn Pally',
+      email: 'johndoe@example.com',
+      password: 'password12345',
+      created_at: new Date('2022-09-07T22:54:07.042Z'),
+      updated_at: new Date('2022-09-07T22:54:07.042Z'),
+      email_confirmed: false,
+      is_admin: true,
+      isDeleted: false,
+      credentials_id: 1,
+    };
+    const update: UpdateUserDto = {
+      id: 1,
+      name: 'Fahrn Pally',
+    };
+
+    prismaMock.user.update.mockResolvedValue(result);
+
+    await expect(userService.update(tokenPayload, update)).resolves.toEqual(result);
+  });
+
+  test("Non admin should throw when user detail id not the same as it's  id ", async () => {
+    const result = {
+      id: 1,
+      name: 'Fahrn Pally',
+      email: 'johndoe@example.com',
+      password: 'password12345',
+      created_at: new Date(),
+      updated_at: new Date(),
+      email_confirmed: false,
+      is_admin: false,
+      isDeleted: false,
+      credentials_id: 1,
+    };
+    const update: UpdateUserDto = {
+      id: 1,
+      name: 'Fahrn Pally',
+    };
+    const data = {
+      id: 2,
+      username: 'johndoe@example.com',
+      is_admin: false,
+      email_confirmed: false,
+      iat: 1647920317,
+      exp: 1679456317,
+    };
+
+    prismaMock.user.update.mockResolvedValue(result);
+
+    await expect(userService.update(data, update)).rejects.toEqual(new UserNotFoundException());
+  });
+
   test("should update a user's name ", async () => {
     const result = {
       id: 1,
@@ -105,7 +192,7 @@ describe('UserService', () => {
       updated_at: new Date(),
       email_confirmed: false,
       is_admin: true,
-      isDeleted: false,
+      isDeleted: true,
       credentials_id: 1,
     };
     const update: UpdateUserDto = {
@@ -115,27 +202,60 @@ describe('UserService', () => {
     const data = {
       id: 1,
       username: 'johndoe@example.com',
-      is_admin: true,
+      is_admin: false,
       email_confirmed: false,
       iat: 1647920317,
       exp: 1679456317,
     };
-
+    prismaMock.user.findUnique.mockResolvedValue(result);
     prismaMock.user.update.mockResolvedValue(result);
 
-    await expect(userService.update(data, update)).resolves.toEqual(result);
+    await expect(userService.update(data, update)).rejects.toEqual(new UserNotFoundException());
+  });
+
+  test("Admin should update a user's name if user  ", async () => {
+    const result = {
+      id: 1,
+      name: 'Fahrn Pally',
+      email: 'johndoe@example.com',
+      password: 'password12345',
+      created_at: new Date('2022-09-07T22:54:07.042Z'),
+      updated_at: new Date('2022-09-07T22:54:07.042Z'),
+      email_confirmed: false,
+      is_admin: false,
+      isDeleted: false,
+      credentials_id: 1,
+    };
+    const update: UpdateUserDto = {
+      id: 1,
+      name: 'Fahrn Pally',
+    };
+    prismaMock.user.findUnique.mockResolvedValue(result);
+    prismaMock.user.update.mockResolvedValue(result);
+
+    await expect(userService.update(nonAdminTokenPayload, update)).resolves.toEqual(result);
   });
 
   test('should find all users ', async () => {
     prismaMock.user.findMany.mockResolvedValue([userDetails]);
-
     await expect(userService.find(tokenPayload, {})).resolves.toEqual([userDetails]);
+  });
+
+  test('should return only the user details for non admin ', async () => {
+    prismaMock.user.findMany.mockResolvedValue([nonAdminUserDetails]);
+    await expect(userService.find(nonAdminTokenPayload, {})).resolves.toEqual([nonAdminUserDetails]);
   });
 
   test('should find one user ', async () => {
     prismaMock.user.findUnique.mockResolvedValue(userDetails);
-
     await expect(userService.findUnique({ id: 1 }, false, tokenPayload)).resolves.toEqual(userDetails);
+  });
+
+  test('should throw error when the user is not an admin ', async () => {
+    prismaMock.user.findUnique.mockRejectedValue(new UnauthorizedException());
+    await expect(userService.findUnique({ id: 2 }, false, nonAdminTokenPayload)).rejects.toEqual(
+      new UnauthorizedException(),
+    );
   });
 
   test('should delete one user ', async () => {
@@ -162,6 +282,10 @@ describe('UserService', () => {
     await expect(userService.delete(tokenPayload, { id: 1 })).resolves.toEqual(result);
   });
 
+  test('should delete one user ', async () => {
+    await expect(userService.delete(nonAdminTokenPayload, { id: 1 })).rejects.toEqual(new UserNotFoundException());
+  });
+
   test('Authenticate and get a user token ', async () => {
     const result = {
       token:
@@ -176,6 +300,25 @@ describe('UserService', () => {
     await expect(userService.authenticateAndGetJwtToken(authenticateUserDto)).resolves.toEqual(result);
   });
 
+  test('Authenticate and get a user token ', async () => {
+    bcryptCompare.mockReturnValue(true);
+    await userService.generateToken(tokenPayload);
+
+    await expect(userService.authenticateAndGetJwtToken(authenticateUserDto)).rejects.toEqual(
+      new UserNotFoundException(),
+    );
+  });
+
+  test('Authenticate and get a user token ', async () => {
+    prismaMock.user.findUnique.mockResolvedValue(userDetails);
+    bcryptCompare.mockReturnValue(false);
+    await userService.generateToken(tokenPayload);
+
+    await expect(userService.authenticateAndGetJwtToken(authenticateUserDto)).rejects.toEqual(
+      new EmailOrPasswordNotFoundException(),
+    );
+  });
+
   test('Generate Token ', async () => {
     await expect(userService.generateToken(tokenPayload)).resolves.toEqual(tokenResult);
   });
@@ -183,7 +326,20 @@ describe('UserService', () => {
   test('Authenticate user', async () => {
     prismaMock.user.findUnique.mockResolvedValue(userDetails);
     bcryptCompare.mockReturnValue(true);
-    await expect(userService.authenticate(authenticateUserDto)).resolves.toEqual(userDetails);
+    await expect(userService.authenticate(authenticateUserDto)).resolves.toMatchObject(
+      expect.objectContaining(userDetails),
+    );
+  });
+
+  test('Authenticate user', async () => {
+    bcryptCompare.mockReturnValue(true);
+    await expect(await userService.authenticate(authenticateUserDto)).toBeFalsy();
+  });
+
+  test('Authenticate user', async () => {
+    prismaMock.user.findUnique.mockResolvedValue(userDetails);
+    bcryptCompare.mockReturnValue(false);
+    await expect(await userService.authenticate(authenticateUserDto)).toBeFalsy();
   });
 
   test('Validate Token', async () => {

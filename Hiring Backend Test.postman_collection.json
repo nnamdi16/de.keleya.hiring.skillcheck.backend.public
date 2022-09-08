@@ -607,7 +607,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Kampala George\",\n\t\"email\": \"kampala@fake-mail.com\",\n\t\"password\": \"password12345\"\n}",
+							"raw": "{\n\t\"name\": \"Dampala Georger\",\n\t\"email\": \"sampala@faker-mail.com\",\n\t\"password\": \"password12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -783,7 +783,7 @@
 		},
 		{
 			"key": "tokenAdmin",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJqb2huZG9lQGV4YW1wbGUuY29tIiwiaXNfYWRtaW4iOnRydWUsImVtYWlsX2NvbmZpcm1lZCI6ZmFsc2UsImlhdCI6MTY0NzgwNDk4OCwiZXhwIjoxNjc5MzQwOTg4fQ.xFK_ck2Hkz7BfMupEn26LX9V1FtHOKIQcQI4cee8iL8"
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJqb2huZG9lQGV4YW1wbGUuY29tIiwiaXNfYWRtaW4iOnRydWUsImVtYWlsX2NvbmZpcm1lZCI6ZmFsc2UsImlhdCI6MTY2MjY0NTIwNSwiZXhwIjoxNjk0MTgxMjA1fQ.kc6iVKAyDlxuiELOCyxR9MRg_BeGDc_rl9Wl3w83stE"
 		}
 	]
 }

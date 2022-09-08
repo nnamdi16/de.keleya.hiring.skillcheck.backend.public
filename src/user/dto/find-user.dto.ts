@@ -1,5 +1,5 @@
 import { ApiProperty, PartialType, PickType } from '@nestjs/swagger';
-import { IsArray, IsDate, IsIn, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { CreateUserDto } from './create-user.dto';
 
 export class FindUserDto extends PartialType(PickType(CreateUserDto, ['name', 'email'] as const)) {
@@ -29,6 +29,7 @@ export class FindUserDto extends PartialType(PickType(CreateUserDto, ['name', 'e
     required: false,
     title: 'limit',
   })
+  @IsOptional()
   limit?: number;
 
   @IsNumber()
@@ -47,6 +48,7 @@ export class FindUserDto extends PartialType(PickType(CreateUserDto, ['name', 'e
     example: 'asc',
     required: false,
     title: 'orderBy',
+    enum: ['asc', 'desc'],
   })
   orderBy?: 'asc' | 'desc';
 }

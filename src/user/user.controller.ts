@@ -19,6 +19,10 @@ export class UserController {
   @Get('/')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'Fetched users successfully',
+  })
   async find(@Query() findUserDto: FindUserDto, @Req() req: Request) {
     return this.usersService.find(req.user as JwtTokenUser, findUserDto);
   }
@@ -26,19 +30,22 @@ export class UserController {
   @Get('/:id')
   @ApiBearerAuth()
   @EndpointIsPublic()
+  @ApiResponse({
+    status: 200,
+    description: 'User fetched successfully',
+  })
   @UseGuards(JwtAuthGuard)
   async findUnique(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
-    return this.usersService.findUnique({ id }, true, req.user);
+    return this.usersService.findUnique({ id }, false, req.user);
   }
 
   @Post('/')
   @ApiResponse({
     status: 200,
-    description: 'Subrequest created successfully',
+    description: 'User created successfully',
   })
   @ApiBody({ type: CreateUserDto, description: 'Create a new user with credentials' })
   async create(@Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto);
     return this.usersService.create(createUserDto);
   }
 
