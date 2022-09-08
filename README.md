@@ -89,4 +89,12 @@ yarn test
 All the service layers were tested using unit test and End to end testing as well as postman collection test. 
 
 Areas of Improvement: Writing more test especially completing the test that covers the sad path and completing the end-to-end test
+
+#### Duration of Task
+Actual amount of time put into the task is 2 days but from the time the task was sent to the time of submission is 6days.
+
+#### Postman Solution Screenshot
+- ![postman_test1_2022-09-08.png](postman_test1_2022-09-08.png)
+- ![postman_test2_2022-09-08.png](postman_test2_2022-09-08.png)
+- ![postman_2022-09-08.png](postman_2022-09-08.png)
 ...
