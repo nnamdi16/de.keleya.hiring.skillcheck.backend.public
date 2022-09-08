@@ -86,7 +86,7 @@ yarn test
 
 
 #### Testing
-All the service layers were tested using unit test. End to end testing was not fully accomplished because of the errors gotten from testing with database of the project. Possibly a mockDB could resolve this which I am researching on. 
+All the service layers were tested using unit test and End to end testing as well as postman collection test. 
 
 Areas of Improvement: Writing more test especially completing the test that covers the sad path and completing the end-to-end test
 ...
