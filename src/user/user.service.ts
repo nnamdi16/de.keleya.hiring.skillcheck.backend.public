@@ -12,7 +12,7 @@ import { FindUserDto } from './dto/find-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserNotFoundException } from '../common/exception-filters/UserNotFoundException';
 import { ConfigService } from '@nestjs/config';
-import { Response } from './dto/response.dto';
+import { GenericMatch, Response } from './dto/response.dto';
 import { JwtTokenUser } from '../../src/common/types/jwtTokenUser';
 
 @Injectable()
@@ -40,8 +40,9 @@ export class UserService {
     }
     const { name = '', email = '', updatedSince, id = [], limit = 10, offset = 0, orderBy } = findUserDto;
     const ids = id.map((str) => Number(str));
-    const idQuery = id.length > 0 ? { in: ids } : {};
+    const idQuery = id.length ? { in: ids } : {};
     const dateQuery = updatedSince ? { lte: new Date(updatedSince) } : {};
+    const emailQuery = !email ? { contains: email } : email;
     return this.prisma.user.findMany({
       where: {
         OR: [
@@ -49,9 +50,7 @@ export class UserService {
             name: {
               contains: name,
             },
-            email: {
-              contains: email,
-            },
+            email: emailQuery,
             updated_at: dateQuery,
             id: idQuery,
           },
@@ -92,11 +91,11 @@ export class UserService {
    * @returns User
    */
   async findUnique(whereUnique: Prisma.UserWhereUniqueInput, includeCredentials = false, user?: JwtTokenUser) {
-    if (user?.id !== whereUnique.id) {
+    if (user?.id !== whereUnique.id && !user?.is_admin) {
       throw new UnauthorizedException();
     }
 
-    return this.findOne(whereUnique, includeCredentials);
+    return await this.findOne(whereUnique, includeCredentials);
   }
 
   /**
@@ -107,7 +106,6 @@ export class UserService {
    */
   async create(createUserDto: CreateUserDto): Promise<Response> {
     try {
-      console.log(createUserDto);
       const isExistingUser = await this.findOne({ email: createUserDto.email });
       if (isExistingUser) {
         throw new UserAlreadyExistsException();
@@ -150,15 +148,17 @@ export class UserService {
       if (userDetails?.isDeleted) {
         throw new UserNotFoundException();
       }
-      const { id, ...updates } = updateUserDto;
-      return await this.prisma.user.update({
-        where: {
-          id,
-        },
-        data: {
-          ...updates,
-        },
-      });
+      const { id, password, ...updates } = updateUserDto;
+
+      if (!user.is_admin) {
+        const credentials = password
+          ? {
+              update: { hash: hashPassword(password as string) },
+            }
+          : {};
+        return await this.updateById(id, updates, credentials);
+      }
+      return await this.updateById(id, { ...updates });
     } catch (error) {
       if (error instanceof HttpException) {
         throw new HttpException(error.message, error.getStatus());
@@ -166,6 +166,24 @@ export class UserService {
         throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
+  }
+
+  /**
+   * Updates a user by Id unless it does not exist or has been marked as deleted before
+   *
+   * @param updateUserDto
+   * @param id
+   * @returns result of update
+   */
+  async updateById(id: number, updateUserDto: Omit<UpdateUserDto, 'id'>, credentials?: GenericMatch) {
+    const data = await this.prisma.user.update({
+      where: { id },
+      data: {
+        ...updateUserDto,
+        credentials,
+      },
+    });
+    return data;
   }
 
   /**
@@ -218,7 +236,7 @@ export class UserService {
       }
       const { credentials } = userDetails;
 
-      const isValidPassword = matchHashedPassword(password, credentials?.hash as string);
+      const isValidPassword = await matchHashedPassword(password, credentials?.hash as string);
       if (!isValidPassword) {
         throw new EmailOrPasswordNotFoundException();
       }
@@ -252,7 +270,7 @@ export class UserService {
         return false;
       }
       const { credentials } = userDetails;
-      const isValidPassword = matchHashedPassword(password, credentials?.hash as string);
+      const isValidPassword = await matchHashedPassword(password, credentials?.hash as string);
       if (!isValidPassword) {
         return false;
       }
@@ -269,7 +287,7 @@ export class UserService {
    * @returns the decoded token if valid
    */
   async validateToken(token: string) {
-    const decodedJwtAccessToken = this.jwtService.decode(token.split(' ')[1]);
+    const decodedJwtAccessToken = await this.jwtService.decode(token.split(' ')[1]);
     if (!decodedJwtAccessToken) {
       throw new UserNotFoundException();
     }
