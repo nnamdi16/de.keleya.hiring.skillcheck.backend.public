@@ -4,7 +4,7 @@ const token =
 jest.mock('jsonwebtoken');
 const mockedJwtService = {
   sign: jest.fn().mockReturnValue(token),
-  decode: jest.fn().mockResolvedValue(true),
+  decode: (value: any) => jest.fn().mockResolvedValue(value),
 };
 
 export default mockedJwtService;
